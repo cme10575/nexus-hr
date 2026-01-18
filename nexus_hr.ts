@@ -90,6 +90,7 @@ const theArchitect = new Agent({
 });
 
 const TheFactFinderSchema = z.object({
+  executed_query: z.string().describe("실행한 Cypher 쿼리"),
   reasoning: z.string().describe("DB 검색 결과에 대한 요약 및 후보 선정 근거"),
   candidates: z.array(z.object({
     id: z.string().describe("직원 고유 ID (벡터 DB 조회용 키)"),
@@ -111,9 +112,13 @@ Relationships:
 (Employee)-[:HAS_SKILL]->(Skill)
 (Employee)-[:WORKED_ON]->(Project)
 (Project)-[:IN_DOMAIN]->(Domain)
+[Knowledge: 검색 키워드 규칙]
+- Position 검색: "Senior", "Middle", "Junior", "Backend", "Frontend" (toLower()를 사용하고 영어 키워드로 검색)
+- Skill name 검색: "Kafka", "Java", "Spring Boot" (대소문자를 정확히 지켜라)
+- Domain name 검색: "주문", "결제", "배송" (한글 이름을 사용하라)
 [Task]
 Architect가 제공한 graph_filter JSON을 분석하라.
-위 스키마를 바탕으로 Employee를 필터링하는 Cypher 쿼리를 작성하고 execute_cypher_query 툴을 즉시 호출하여 쿼리를 실행해 결과를 반환하라.
+위 스키마와 검색 키워드 규칙을 바탕으로 Employee를 필터링하는 Cypher 쿼리를 작성하고 executeCypherQuery 툴을 즉시 호출하여 쿼리를 실행해 결과를 반환하라.
 연차 필터링: min_experience가 "3년"처럼 문자열로 들어오면 숫자 3만 추출하여 e.exp_years >= 3으로 처리하라.
 결과 제한: 후보자가 너무 많을 경우를 대비해 상위 5명만 리턴하도록 LIMIT 5를 사용하라.`,
   model: "gpt-4.1",
